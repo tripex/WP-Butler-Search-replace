@@ -1,0 +1,8 @@
+.ssr-wrap .ssr-scope-group { margin-bottom: 1em; }
+.ssr-wrap .ssr-advanced { margin-top: 1em; }
+.ssr-error { color: #b32d2e; margin-left: .5em; }
+.ssr-progress-bar { background: #eee; height: 8px; border-radius: 4px; overflow: hidden; max-width: 600px; }
+.ssr-progress-bar > div { background: #2271b1; height: 100%; width: 0%; transition: width .2s; }
+#ssr-results-table td { vertical-align: top; font-family: monospace; font-size: 12px; white-space: pre-wrap; word-break: break-word; }
+#ssr-results-table .ssr-before { background: #fff5f5; }
+#ssr-results-table .ssr-after  { background: #f1faf1; }

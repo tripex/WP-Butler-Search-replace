@@ -30,7 +30,7 @@ final class ScopeRegistry {
 			 *
 			 * @param array<string, ScopeDefinition> $scopes
 			 */
-			$this->scopes = apply_filters( 'ssr_scopes', $this->scopes );
+			$this->scopes = apply_filters( 'smsr_scopes', $this->scopes );
 		}
 		return $this->scopes;
 	}

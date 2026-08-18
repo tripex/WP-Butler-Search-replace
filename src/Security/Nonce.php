@@ -5,8 +5,8 @@ namespace SmartSearchReplace\Security;
 
 final class Nonce {
 
-	public const ACTION = 'ssr_action';
-	public const FIELD  = 'ssr_nonce';
+	public const ACTION = 'smsr_action';
+	public const FIELD  = 'smsr_nonce';
 
 	public static function create(): string {
 		return wp_create_nonce( self::ACTION );

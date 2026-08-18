@@ -8,24 +8,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 ?>
-<div class="wrap ssr-wrap">
+<div class="wrap smsr-wrap">
 	<h1><?php esc_html_e( 'Smart Search Replace', 'smart-search-replace' ); ?></h1>
 
 	<p class="description">
 		<?php esc_html_e( 'Replace text across your site safely. Preview every change before writing to the database.', 'smart-search-replace' ); ?>
 	</p>
 
-	<form id="ssr-form" onsubmit="return false;">
+	<form id="smsr-form" onsubmit="return false;">
 		<input type="hidden" name="<?php echo esc_attr( \SmartSearchReplace\Security\Nonce::FIELD ); ?>" value="<?php echo esc_attr( $nonce ); ?>" />
 
 		<table class="form-table" role="presentation">
 			<tr>
-				<th scope="row"><label for="ssr-search"><?php esc_html_e( 'Search for', 'smart-search-replace' ); ?></label></th>
-				<td><textarea id="ssr-search" name="search" rows="2" class="large-text code" spellcheck="false"></textarea></td>
+				<th scope="row"><label for="smsr-search"><?php esc_html_e( 'Search for', 'smart-search-replace' ); ?></label></th>
+				<td><textarea id="smsr-search" name="search" rows="2" class="large-text code" spellcheck="false"></textarea></td>
 			</tr>
 			<tr>
-				<th scope="row"><label for="ssr-replace"><?php esc_html_e( 'Replace with', 'smart-search-replace' ); ?></label></th>
-				<td><textarea id="ssr-replace" name="replace" rows="2" class="large-text code" spellcheck="false"></textarea></td>
+				<th scope="row"><label for="smsr-replace"><?php esc_html_e( 'Replace with', 'smart-search-replace' ); ?></label></th>
+				<td><textarea id="smsr-replace" name="replace" rows="2" class="large-text code" spellcheck="false"></textarea></td>
 			</tr>
 			<tr>
 				<th scope="row"><?php esc_html_e( 'Options', 'smart-search-replace' ); ?></th>
@@ -35,7 +35,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<label><input type="checkbox" name="case_sensitive" value="1" checked /> <?php esc_html_e( 'Case sensitive', 'smart-search-replace' ); ?></label><br />
 						<label><input type="checkbox" name="whole_word" value="1" /> <?php esc_html_e( 'Match whole words only', 'smart-search-replace' ); ?></label><br />
 						<label><input type="checkbox" name="regex" value="1" /> <?php esc_html_e( 'Use regular expression', 'smart-search-replace' ); ?></label>
-						<span id="ssr-regex-error" class="ssr-error" hidden></span>
+						<span id="smsr-regex-error" class="smsr-error" hidden></span>
 					</fieldset>
 				</td>
 			</tr>
@@ -43,7 +43,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<th scope="row"><?php esc_html_e( 'Where should we look?', 'smart-search-replace' ); ?></th>
 				<td>
 					<?php foreach ( $grouped as $group_name => $defs ) : ?>
-						<fieldset class="ssr-scope-group">
+						<fieldset class="smsr-scope-group">
 							<legend><strong><?php echo esc_html( $group_name ); ?></strong></legend>
 							<?php foreach ( $defs as $def ) : ?>
 								<label>
@@ -56,7 +56,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<?php endforeach; ?>
 						</fieldset>
 					<?php endforeach; ?>
-					<details class="ssr-advanced">
+					<details class="smsr-advanced">
 						<summary><?php esc_html_e( 'Advanced', 'smart-search-replace' ); ?></summary>
 						<label><input type="checkbox" name="include_guid" value="1" /> <?php esc_html_e( 'Include the guid column (not recommended)', 'smart-search-replace' ); ?></label>
 					</details>
@@ -65,20 +65,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</table>
 
 		<p class="submit">
-			<button type="button" class="button button-primary" id="ssr-preview"><?php esc_html_e( 'Preview (dry-run)', 'smart-search-replace' ); ?></button>
-			<button type="button" class="button button-secondary" id="ssr-execute" disabled><?php esc_html_e( 'Execute changes', 'smart-search-replace' ); ?></button>
+			<button type="button" class="button button-primary" id="smsr-preview"><?php esc_html_e( 'Preview (dry-run)', 'smart-search-replace' ); ?></button>
+			<button type="button" class="button button-secondary" id="smsr-execute" disabled><?php esc_html_e( 'Execute changes', 'smart-search-replace' ); ?></button>
 		</p>
 	</form>
 
-	<div id="ssr-progress" class="ssr-progress" hidden>
-		<p><span id="ssr-progress-text"></span></p>
-		<div class="ssr-progress-bar"><div id="ssr-progress-fill"></div></div>
+	<div id="smsr-progress" class="smsr-progress" hidden>
+		<p><span id="smsr-progress-text"></span></p>
+		<div class="smsr-progress-bar"><div id="smsr-progress-fill"></div></div>
 	</div>
 
-	<div id="ssr-results" class="ssr-results" hidden>
+	<div id="smsr-results" class="smsr-results" hidden>
 		<h2><?php esc_html_e( 'Preview results', 'smart-search-replace' ); ?></h2>
-		<p id="ssr-results-summary"></p>
-		<table class="widefat striped" id="ssr-results-table">
+		<p id="smsr-results-summary"></p>
+		<table class="widefat striped" id="smsr-results-table">
 			<thead>
 				<tr>
 					<th><?php esc_html_e( 'Table', 'smart-search-replace' ); ?></th>

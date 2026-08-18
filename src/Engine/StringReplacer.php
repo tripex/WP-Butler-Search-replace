@@ -59,7 +59,9 @@ final class StringReplacer {
 		if ( $this->plan->whole_word ) {
 			$pattern = '~(?<![\p{L}\p{N}_])' . preg_quote( $this->plan->search, '~' ) . '(?![\p{L}\p{N}_])~u'
 				. ( $this->plan->case_sensitive ? '' : 'i' );
-			$result  = @preg_replace( $pattern, $this->plan->replace, $chunk );
+			// The user typed a literal replacement, not a regex one — escape
+			// backslashes and $ so "$100" is not read as a backreference.
+			$result = @preg_replace( $pattern, addcslashes( $this->plan->replace, '\\$' ), $chunk );
 			return is_string( $result ) ? $result : $chunk;
 		}
 

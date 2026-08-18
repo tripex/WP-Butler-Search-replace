@@ -11,12 +11,12 @@ declare( strict_types=1 );
  */
 
 define( 'ABSPATH', __DIR__ . '/' );
-define( 'SSR_PLUGIN_DIR', dirname( __DIR__ ) . '/' );
-define( 'SSR_PLUGIN_FILE', SSR_PLUGIN_DIR . 'smart-search-replace.php' );
-define( 'SSR_PLUGIN_URL', 'http://example.test/wp-content/plugins/smart-search-replace/' );
-define( 'SSR_VERSION', '0.1.0' );
+define( 'SMSR_PLUGIN_DIR', dirname( __DIR__ ) . '/' );
+define( 'SMSR_PLUGIN_FILE', SMSR_PLUGIN_DIR . 'smart-search-replace.php' );
+define( 'SMSR_PLUGIN_URL', 'http://example.test/wp-content/plugins/smart-search-replace/' );
+define( 'SMSR_VERSION', '0.1.0' );
 
-require_once SSR_PLUGIN_DIR . 'src/Support/Autoloader.php';
+require_once SMSR_PLUGIN_DIR . 'src/Support/Autoloader.php';
 \SmartSearchReplace\Support\Autoloader::register();
 
 if ( ! function_exists( 'wp_json_encode' ) ) {

@@ -46,6 +46,12 @@ final class SerializedReplacer {
 			return $out;
 		}
 
+		if ( $value instanceof \__PHP_Incomplete_Class ) {
+			// Class not loaded — never touch its payload. PHP re-serializes
+			// it back to the original class byte-for-byte.
+			return $value;
+		}
+
 		if ( $value instanceof \stdClass ) {
 			$out = new \stdClass();
 			foreach ( get_object_vars( $value ) as $k => $v ) {
@@ -67,11 +73,17 @@ final class SerializedReplacer {
 	}
 
 	private function handleString( string $value, int $depth ): string {
-		// Try serialized first.
+		// Try serialized first. Only stdClass (no wakeup/destruct code) may
+		// be instantiated, so stored payloads cannot trigger object
+		// injection; any other class surfaces as __PHP_Incomplete_Class,
+		// which walk() skips and serialize() round-trips byte-identically.
 		if ( $this->isSerialized( $value ) ) {
-			$unserialized = @unserialize( $value, array( 'allowed_classes' => true ) );
+			$unserialized = @unserialize( $value, array( 'allowed_classes' => array( \stdClass::class ) ) );
 			if ( false !== $unserialized || 'b:0;' === $value ) {
 				$processed = $this->walk( $unserialized, $depth + 1 );
+				if ( serialize( $processed ) === serialize( $unserialized ) ) {
+					return $value;
+				}
 				return serialize( $processed );
 			}
 		}
@@ -81,7 +93,13 @@ final class SerializedReplacer {
 			$decoded = json_decode( $value, true );
 			if ( null !== $decoded && JSON_ERROR_NONE === json_last_error() ) {
 				$processed = $this->walk( $decoded, $depth + 1 );
-				$encoded   = wp_json_encode( $processed, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
+				// Only re-encode when a replacement actually changed the
+				// decoded structure — re-encoding untouched JSON would still
+				// rewrite rows (whitespace, \uXXXX escapes) without a match.
+				if ( $processed === $decoded ) {
+					return $value;
+				}
+				$encoded = wp_json_encode( $processed, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 				if ( is_string( $encoded ) ) {
 					return $encoded;
 				}

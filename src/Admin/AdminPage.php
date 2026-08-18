@@ -35,6 +35,6 @@ final class AdminPage {
 		}
 
 		$nonce = Nonce::create();
-		require SSR_PLUGIN_DIR . 'views/admin-page.php';
+		require SMSR_PLUGIN_DIR . 'views/admin-page.php';
 	}
 }

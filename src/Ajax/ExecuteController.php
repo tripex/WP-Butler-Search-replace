@@ -17,7 +17,7 @@ final class ExecuteController {
 	}
 
 	public function handle(): void {
-		Capabilities::ensure();
+		Capabilities::ensureAjax();
 		Nonce::ensureFromRequest();
 
 		try {

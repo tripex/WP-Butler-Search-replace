@@ -11,8 +11,8 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
 
 global $wpdb;
 
-$table = $wpdb->prefix . 'ssr_runs';
+$table = $wpdb->prefix . 'smsr_runs';
 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.DirectDatabaseQuery.SchemaChange,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Schema teardown on plugin uninstall; identifier is prefix + literal.
 $wpdb->query( "DROP TABLE IF EXISTS {$table}" );
 
-delete_option( 'ssr_settings' );
+delete_option( 'smsr_settings' );

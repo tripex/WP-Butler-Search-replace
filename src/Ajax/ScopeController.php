@@ -14,7 +14,7 @@ final class ScopeController {
 	}
 
 	public function handle(): void {
-		Capabilities::ensure();
+		Capabilities::ensureAjax();
 		Nonce::ensureFromRequest();
 
 		$registry = EngineFactory::registry();

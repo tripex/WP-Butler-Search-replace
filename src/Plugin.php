@@ -23,7 +23,7 @@ final class Plugin {
 	private function __construct() {}
 
 	public function boot(): void {
-		load_plugin_textdomain( 'smart-search-replace', false, dirname( SSR_PLUGIN_BASENAME ) . '/languages' );
+		load_plugin_textdomain( 'smart-search-replace', false, dirname( SMSR_PLUGIN_BASENAME ) . '/languages' );
 
 		if ( is_admin() ) {
 			( new AdminPage() )->register();

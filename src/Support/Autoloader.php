@@ -6,7 +6,7 @@ namespace SmartSearchReplace\Support;
 final class Autoloader {
 
 	private const PREFIX  = 'SmartSearchReplace\\';
-	private const BASEDIR = SSR_PLUGIN_DIR . 'src/';
+	private const BASEDIR = SMSR_PLUGIN_DIR . 'src/';
 
 	public static function register(): void {
 		spl_autoload_register( array( self::class, 'load' ) );

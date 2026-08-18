@@ -21,13 +21,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'SSR_VERSION', '0.1.0' );
-define( 'SSR_PLUGIN_FILE', __FILE__ );
-define( 'SSR_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-define( 'SSR_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'SSR_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
+define( 'SMSR_VERSION', '0.1.0' );
+define( 'SMSR_PLUGIN_FILE', __FILE__ );
+define( 'SMSR_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+define( 'SMSR_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'SMSR_PLUGIN_BASENAME', plugin_basename( __FILE__ ) );
 
-require_once SSR_PLUGIN_DIR . 'src/Support/Autoloader.php';
+require_once SMSR_PLUGIN_DIR . 'src/Support/Autoloader.php';
 \SmartSearchReplace\Support\Autoloader::register();
 
 add_action(

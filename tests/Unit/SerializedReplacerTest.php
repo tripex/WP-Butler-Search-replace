@@ -4,6 +4,17 @@ declare( strict_types=1 );
 use PHPUnit\Framework\TestCase;
 use SmartSearchReplace\Engine\SerializedReplacer;
 
+// A loaded class with a wakeup side effect — the replacer must never let
+// unserialize() instantiate it from stored data.
+final class EvilGadget {
+	public static int $wakeups = 0;
+	public string $prop        = '';
+
+	public function __wakeup(): void {
+		++self::$wakeups;
+	}
+}
+
 final class SerializedReplacerTest extends TestCase {
 
 	private function replacer( string $from, string $to ): SerializedReplacer {
@@ -56,6 +67,25 @@ final class SerializedReplacerTest extends TestCase {
 		$decoded = json_decode( $out, true );
 		$this->assertSame( 'baz bar', $decoded['title'] );
 		$this->assertSame( 'baz', $decoded['nested']['x'] );
+	}
+
+	public function test_json_without_match_is_byte_identical(): void {
+		// Non-canonical formatting (spaces, \uXXXX escapes) must survive
+		// untouched when nothing matches — no cosmetic rewrites.
+		$json = '{ "a": 1, "b": "café" }';
+		$r    = $this->replacer( 'absent', 'absent' );
+		$this->assertSame( $json, $r->process( $json ) );
+	}
+
+	public function test_unknown_class_is_never_instantiated_and_left_untouched(): void {
+		$payload = 'a:2:{s:3:"obj";O:10:"EvilGadget":1:{s:4:"prop";s:3:"foo";}s:5:"other";s:7:"foo bar";}';
+
+		$r      = $this->replacer( 'foo', 'WORLD' );
+		$result = $r->process( $payload );
+
+		$this->assertSame( 0, EvilGadget::$wakeups, 'Stored object must not be instantiated (object injection).' );
+		$this->assertStringContainsString( 'O:10:"EvilGadget":1:{s:4:"prop";s:3:"foo";}', $result );
+		$this->assertStringContainsString( 's:9:"WORLD bar"', $result );
 	}
 
 	public function test_multibyte_safe(): void {

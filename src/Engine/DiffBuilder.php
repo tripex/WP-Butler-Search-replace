@@ -44,8 +44,8 @@ final class DiffBuilder {
 			$end_b   = min( strlen( $before ), $i + self::CONTEXT_CHARS );
 			$end_a   = min( strlen( $after ), $j + self::CONTEXT_CHARS );
 			$out[]   = array(
-				'before' => substr( $before, $start_b, $end_b - $start_b ),
-				'after'  => substr( $after, $start_a, $end_a - $start_a ),
+				'before' => self::utf8Safe( substr( $before, $start_b, $end_b - $start_b ) ),
+				'after'  => self::utf8Safe( substr( $after, $start_a, $end_a - $start_a ) ),
 			);
 			$i       = $end_b;
 			$j       = $end_a;
@@ -57,6 +57,18 @@ final class DiffBuilder {
 		if ( strlen( $s ) <= $limit ) {
 			return $s;
 		}
-		return substr( $s, 0, $limit ) . '…';
+		// mb_strcut cuts on the byte limit without splitting a UTF-8 char.
+		return mb_strcut( $s, 0, $limit, 'UTF-8' ) . '…';
+	}
+
+	/**
+	 * Byte-offset windows can start or end mid-character; drop the broken
+	 * edge sequences so the JSON response stays valid UTF-8.
+	 */
+	private static function utf8Safe( string $s ): string {
+		if ( preg_match( '~~u', $s ) ) {
+			return $s;
+		}
+		return (string) mb_convert_encoding( $s, 'UTF-8', 'UTF-8' );
 	}
 }

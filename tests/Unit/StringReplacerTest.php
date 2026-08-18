@@ -36,6 +36,22 @@ final class StringReplacerTest extends TestCase {
 		$this->assertSame( 'bar food', $r->replace( 'foo food' ) );
 	}
 
+	public function test_whole_word_replacement_with_dollar_is_literal(): void {
+		$r = StringReplacer::fromPlan(
+			$this->plan( [ 'search' => 'price', 'replace' => 'cost: $100', 'whole_word' => true ] ),
+			new UrlProtector()
+		);
+		$this->assertSame( 'the cost: $100 is high', $r->replace( 'the price is high' ) );
+	}
+
+	public function test_whole_word_replacement_with_backslash_is_literal(): void {
+		$r = StringReplacer::fromPlan(
+			$this->plan( [ 'search' => 'path', 'replace' => 'C:\\dir\\1', 'whole_word' => true ] ),
+			new UrlProtector()
+		);
+		$this->assertSame( 'the C:\\dir\\1 here', $r->replace( 'the path here' ) );
+	}
+
 	public function test_regex_with_backref(): void {
 		$r = StringReplacer::fromPlan(
 			$this->plan( [ 'regex' => true, 'search' => '(\d+)', 'replace' => '[$1]' ] ),

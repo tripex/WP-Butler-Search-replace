@@ -15,25 +15,25 @@ final class Assets {
 		}
 
 		wp_enqueue_style(
-			'ssr-admin',
-			SSR_PLUGIN_URL . 'assets/css/admin.css',
+			'smsr-admin',
+			SMSR_PLUGIN_URL . 'assets/css/admin.css',
 			array(),
-			SSR_VERSION
+			SMSR_VERSION
 		);
 
 		wp_enqueue_script(
-			'ssr-admin',
-			SSR_PLUGIN_URL . 'assets/js/admin.js',
+			'smsr-admin',
+			SMSR_PLUGIN_URL . 'assets/js/admin.js',
 			array( 'wp-i18n' ),
-			SSR_VERSION,
+			SMSR_VERSION,
 			true
 		);
 
-		wp_set_script_translations( 'ssr-admin', 'smart-search-replace' );
+		wp_set_script_translations( 'smsr-admin', 'smart-search-replace' );
 
 		wp_localize_script(
-			'ssr-admin',
-			'SSR',
+			'smsr-admin',
+			'SMSR',
 			array(
 				'ajaxUrl' => admin_url( 'admin-ajax.php' ),
 				'strings' => array(

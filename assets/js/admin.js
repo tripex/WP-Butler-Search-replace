@@ -4,16 +4,16 @@
 	const $ = (sel) => document.querySelector(sel);
 	const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
-	const form     = $('#ssr-form');
-	const previewBtn = $('#ssr-preview');
-	const executeBtn = $('#ssr-execute');
-	const progress = $('#ssr-progress');
-	const progressText = $('#ssr-progress-text');
-	const progressFill = $('#ssr-progress-fill');
-	const results  = $('#ssr-results');
-	const summary  = $('#ssr-results-summary');
-	const tbody    = $('#ssr-results-table tbody');
-	const regexErr = $('#ssr-regex-error');
+	const form     = $('#smsr-form');
+	const previewBtn = $('#smsr-preview');
+	const executeBtn = $('#smsr-execute');
+	const progress = $('#smsr-progress');
+	const progressText = $('#smsr-progress-text');
+	const progressFill = $('#smsr-progress-fill');
+	const results  = $('#smsr-results');
+	const summary  = $('#smsr-results-summary');
+	const tbody    = $('#smsr-results-table tbody');
+	const regexErr = $('#smsr-regex-error');
 
 	let lastPreviewHash = null;
 	let lastChangesCount = 0;
@@ -30,7 +30,7 @@
 	}
 
 	async function post(extra) {
-		const res = await fetch(SSR.ajaxUrl, { method: 'POST', body: formData(extra), credentials: 'same-origin' });
+		const res = await fetch(SMSR.ajaxUrl, { method: 'POST', body: formData(extra), credentials: 'same-origin' });
 		const json = await res.json().catch(() => ({ success: false, data: { message: 'Invalid response' } }));
 		if (!json.success) {
 			throw new Error(json.data && json.data.message ? json.data.message : 'Request failed');
@@ -50,8 +50,8 @@
 			const tr = document.createElement('tr');
 			tr.innerHTML = `
 				<td></td><td></td><td></td>
-				<td class="ssr-before"></td>
-				<td class="ssr-after"></td>
+				<td class="smsr-before"></td>
+				<td class="smsr-after"></td>
 			`;
 			tr.children[0].textContent = c.table;
 			tr.children[1].textContent = String(c.pk);
@@ -98,7 +98,7 @@
 			totalChanges += (data.changes || []).length;
 			appendChanges(data.changes || []);
 			results.hidden = false;
-			summary.textContent = `${totalChanges} ${SSR.strings.changesFound} · ${totalRows} ${SSR.strings.rowsScanned}`;
+			summary.textContent = `${totalChanges} ${SMSR.strings.changesFound} · ${totalRows} ${SMSR.strings.rowsScanned}`;
 
 			if (!data.next) break;
 
@@ -125,11 +125,11 @@
 		previewBtn.disabled = true;
 		executeBtn.disabled = true;
 		try {
-			const r = await runLoop('ssr_preview_batch', {});
+			const r = await runLoop('smsr_preview_batch', {});
 			lastPreviewHash = r.planHash;
 			lastChangesCount = r.totalChanges;
 			executeBtn.disabled = r.totalChanges === 0;
-			progressText.textContent = SSR.strings.dryRunDone;
+			progressText.textContent = SMSR.strings.dryRunDone;
 		} catch (e) {
 			alert(e.message);
 		} finally {
@@ -141,19 +141,19 @@
 	executeBtn.addEventListener('click', async () => {
 		if (!validate()) return;
 		if (!lastPreviewHash) return;
-		const confirmInput = prompt(SSR.strings.confirmPrompt, '');
-		if (confirmInput !== SSR.strings.confirmPhrase) return;
+		const confirmInput = prompt(SMSR.strings.confirmPrompt, '');
+		if (confirmInput !== SMSR.strings.confirmPhrase) return;
 
 		clearResults();
 		showProgress('…');
 		previewBtn.disabled = true;
 		executeBtn.disabled = true;
 		try {
-			const r = await runLoop('ssr_execute_batch', {
+			const r = await runLoop('smsr_execute_batch', {
 				confirm: 'I UNDERSTAND',
 				expected_plan_hash: lastPreviewHash,
 			});
-			progressText.textContent = SSR.strings.executeDone;
+			progressText.textContent = SMSR.strings.executeDone;
 		} catch (e) {
 			alert(e.message);
 		} finally {
@@ -166,7 +166,7 @@
 		regexErr.hidden = true;
 		const scopes = $$('input[name="scope_ids[]"]:checked');
 		if (scopes.length === 0) {
-			alert(SSR.strings.noScope);
+			alert(SMSR.strings.noScope);
 			return false;
 		}
 		return true;

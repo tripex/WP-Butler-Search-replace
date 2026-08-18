@@ -10,7 +10,7 @@ final class RunLog {
 
 	public static function tableName(): string {
 		global $wpdb;
-		return $wpdb->prefix . 'ssr_runs';
+		return $wpdb->prefix . 'smsr_runs';
 	}
 
 	public static function install(): void {

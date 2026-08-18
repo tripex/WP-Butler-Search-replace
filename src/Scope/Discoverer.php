@@ -190,7 +190,9 @@ final class Discoverer {
 			new Target(
 				table:        $wpdb->posts,
 				primary_key:  'ID',
-				columns:      array( 'post_title', 'post_content', 'post_excerpt' ),
+				// guid is stripped again by ReplaceEngine unless the plan
+				// sets include_guid.
+				columns:      array( 'post_title', 'post_content', 'post_excerpt', 'guid' ),
 				where_equals: array( 'post_type' => $post_type ),
 			),
 			new Target(

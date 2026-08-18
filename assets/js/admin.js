@@ -91,6 +91,10 @@
 				action,
 				target_index: targetIndex,
 				cursor,
+				// Totals from the batches completed so far, so the server can
+				// log the whole run when the final batch lands.
+				completed_changes: totalChanges,
+				completed_rows: totalRows,
 				...extra,
 			});
 			planHash = data.plan_hash;

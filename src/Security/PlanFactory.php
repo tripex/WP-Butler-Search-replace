@@ -32,7 +32,7 @@ final class PlanFactory {
 		if ( strlen( $search ) > self::MAX_PATTERN_LENGTH || strlen( $replace ) > self::MAX_PATTERN_LENGTH ) {
 			throw new \InvalidArgumentException( esc_html__( 'Search or replace pattern is too long.', 'smart-search-replace' ) );
 		}
-		if ( ! mb_check_encoding( $search, 'UTF-8' ) || ! mb_check_encoding( $replace, 'UTF-8' ) ) {
+		if ( ! self::isUtf8( $search ) || ! self::isUtf8( $replace ) ) {
 			throw new \InvalidArgumentException( esc_html__( 'Patterns must be valid UTF-8.', 'smart-search-replace' ) );
 		}
 
@@ -71,6 +71,14 @@ final class PlanFactory {
 			include_guid:   $include_guid,
 			batch_size:     $batch_size,
 		);
+	}
+
+	/**
+	 * PCRE-based UTF-8 validity check — avoids depending on the optional
+	 * mbstring extension.
+	 */
+	private static function isUtf8( string $s ): bool {
+		return 1 === @preg_match( '~~u', $s );
 	}
 
 	private static function readString( string $key ): string {

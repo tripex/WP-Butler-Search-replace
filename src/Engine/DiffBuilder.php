@@ -57,18 +57,25 @@ final class DiffBuilder {
 		if ( strlen( $s ) <= $limit ) {
 			return $s;
 		}
-		// mb_strcut cuts on the byte limit without splitting a UTF-8 char.
-		return mb_strcut( $s, 0, $limit, 'UTF-8' ) . '…';
+		return self::utf8Safe( substr( $s, 0, $limit ) ) . '…';
 	}
 
 	/**
 	 * Byte-offset windows can start or end mid-character; drop the broken
-	 * edge sequences so the JSON response stays valid UTF-8.
+	 * edge sequences so the JSON response stays valid UTF-8. Pure PCRE — the
+	 * mbstring extension is optional on WordPress hosts, so we must not
+	 * depend on mb_* functions.
 	 */
 	private static function utf8Safe( string $s ): string {
-		if ( preg_match( '~~u', $s ) ) {
+		if ( 1 === @preg_match( '~~u', $s ) ) {
 			return $s;
 		}
-		return (string) mb_convert_encoding( $s, 'UTF-8', 'UTF-8' );
+		$s = (string) preg_replace( '/^[\x80-\xBF]{1,3}/', '', $s );
+		$s = (string) preg_replace( '/[\xC0-\xFF][\x80-\xBF]{0,3}$/', '', $s );
+		if ( 1 === @preg_match( '~~u', $s ) ) {
+			return $s;
+		}
+		// Not UTF-8 at all (binary column) — keep only ASCII for display.
+		return (string) preg_replace( '/[\x80-\xFF]+/', '', $s );
 	}
 }

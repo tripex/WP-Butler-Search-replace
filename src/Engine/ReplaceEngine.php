@@ -89,8 +89,17 @@ final class ReplaceEngine {
 		$serialized_changes = array();
 		$bytes_changed      = 0;
 		foreach ( $batch['changes'] as $change ) {
-			if ( $write ) {
-				$this->writer->write( $change );
+			if ( $write && ! $this->writer->write( $change ) ) {
+				throw new \RuntimeException(
+					esc_html(
+						sprintf(
+							/* translators: 1: table name, 2: row primary key. */
+							__( 'Database write failed for %1$s row %2$s. Execution stopped; changes written before this row are still applied. Check the database and re-run preview.', 'smart-search-replace' ),
+							$change->table,
+							(string) $change->primary_key_value
+						)
+					)
+				);
 			}
 			$bytes_changed       += abs( strlen( $change->after ) - strlen( $change->before ) );
 			$serialized_changes[] = array(

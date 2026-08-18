@@ -10,7 +10,7 @@ use SmartSearchReplace\Support\EngineFactory;
 final class ScopeController {
 
 	public function register(): void {
-		add_action( 'wp_ajax_ssr_list_scopes', array( $this, 'handle' ) );
+		add_action( 'wp_ajax_smsr_list_scopes', array( $this, 'handle' ) );
 	}
 
 	public function handle(): void {

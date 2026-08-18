@@ -13,7 +13,7 @@ use SmartSearchReplace\Support\EngineFactory;
 final class PreviewController {
 
 	public function register(): void {
-		add_action( 'wp_ajax_ssr_preview_batch', array( $this, 'handle' ) );
+		add_action( 'wp_ajax_smsr_preview_batch', array( $this, 'handle' ) );
 	}
 
 	public function handle(): void {
@@ -35,13 +35,18 @@ final class PreviewController {
 		$result = $engine->runBatch( $plan, $target_index, $cursor, false );
 
 		if ( null === $result['next'] ) {
+			// Running totals from the earlier batches of this run, reported
+			// back by the requesting admin's session (informational log only).
+			$completed_changes = isset( $_POST['completed_changes'] ) ? max( 0, (int) $_POST['completed_changes'] ) : 0;
+			$completed_rows    = isset( $_POST['completed_rows'] ) ? max( 0, (int) $_POST['completed_rows'] ) : 0;
+
 			RunLog::record(
 				get_current_user_id(),
 				'dry-run',
 				$plan->hash(),
 				wp_json_encode( $plan->scope_ids ) ?: '[]',
-				count( $result['changes'] ),
-				$result['rows_scanned']
+				$completed_changes + count( $result['changes'] ),
+				$completed_rows + $result['rows_scanned']
 			);
 		}
 

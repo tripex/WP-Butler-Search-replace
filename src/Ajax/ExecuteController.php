@@ -13,7 +13,7 @@ use SmartSearchReplace\Support\EngineFactory;
 final class ExecuteController {
 
 	public function register(): void {
-		add_action( 'wp_ajax_ssr_execute_batch', array( $this, 'handle' ) );
+		add_action( 'wp_ajax_smsr_execute_batch', array( $this, 'handle' ) );
 	}
 
 	public function handle(): void {
@@ -50,16 +50,25 @@ final class ExecuteController {
 			: null;
 
 		$engine = EngineFactory::engine();
-		$result = $engine->runBatch( $plan, $target_index, $cursor, true );
+		try {
+			$result = $engine->runBatch( $plan, $target_index, $cursor, true );
+		} catch ( \RuntimeException $e ) {
+			wp_send_json_error( array( 'message' => $e->getMessage() ), 500 );
+		}
 
 		if ( null === $result['next'] ) {
+			// Running totals from the earlier batches of this run, reported
+			// back by the requesting admin's session (informational log only).
+			$completed_changes = isset( $_POST['completed_changes'] ) ? max( 0, (int) $_POST['completed_changes'] ) : 0;
+			$completed_rows    = isset( $_POST['completed_rows'] ) ? max( 0, (int) $_POST['completed_rows'] ) : 0;
+
 			RunLog::record(
 				get_current_user_id(),
 				'execute',
 				$plan->hash(),
 				wp_json_encode( $plan->scope_ids ) ?: '[]',
-				count( $result['changes'] ),
-				$result['rows_scanned']
+				$completed_changes + count( $result['changes'] ),
+				$completed_rows + $result['rows_scanned']
 			);
 		}
 

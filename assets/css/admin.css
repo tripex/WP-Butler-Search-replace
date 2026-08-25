@@ -1,0 +1,8 @@
+.smsr-wrap .smsr-scope-group { margin-bottom: 1em; }
+.smsr-wrap .smsr-advanced { margin-top: 1em; }
+.smsr-error { color: #b32d2e; margin-left: .5em; }
+.smsr-progress-bar { background: #eee; height: 8px; border-radius: 4px; overflow: hidden; max-width: 600px; }
+.smsr-progress-bar > div { background: #2271b1; height: 100%; width: 0%; transition: width .2s; }
+#smsr-results-table td { vertical-align: top; font-family: monospace; font-size: 12px; white-space: pre-wrap; word-break: break-word; }
+#smsr-results-table .smsr-before { background: #fff5f5; }
+#smsr-results-table .smsr-after  { background: #f1faf1; }
